@@ -1,0 +1,34 @@
+﻿# Secrets and local environment
+.env
+.env.*
+!.env.example
+
+# Virtual environments
+.venv/
+venv/
+
+# Python cache
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+*.so
+.python-version
+
+# Tool caches
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.coverage
+htmlcov/
+
+# Local runtime artifacts
+data/
+logs/
+runtime/
+
+# IDE and OS files
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
