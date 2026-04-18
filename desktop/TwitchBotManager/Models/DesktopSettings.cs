@@ -3,4 +3,6 @@
 public sealed class DesktopSettings
 {
     public string BotRootPath { get; set; } = string.Empty;
+
+    public string Theme { get; set; } = "Dark";
 }

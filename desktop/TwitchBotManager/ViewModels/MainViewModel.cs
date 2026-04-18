@@ -22,17 +22,20 @@ public sealed class MainViewModel : ObservableObject, IAsyncDisposable
     private readonly LogTailService _logTailService;
     private readonly FolderPickerService _folderPickerService;
     private readonly DesktopSettingsService _desktopSettingsService;
+    private readonly ThemeService _themeService;
     private readonly DispatcherTimer _refreshTimer;
     private readonly SemaphoreSlim _refreshLock = new(1, 1);
 
     private BotEnvironmentConfig _config;
     private string _destinationSummary = "Канал не указан";
     private string _streamersSummary = "Стримеры не указаны";
+    private string _streamersCountSummary = "0 стримеров";
     private string _botStatus = "Остановлен";
     private string _botExecutable = "Python еще не запускался";
     private string _statusMessage = "Заполни настройки и нажми «Запустить бота».";
     private string _logContent = "Логи пока не загружены.";
     private string _lastRefreshText = "Еще не обновлялось";
+    private string _currentThemeName = ThemeService.DarkTheme;
     private Brush _statusBrush = StoppedBrush;
     private bool _isInitialized;
 
@@ -42,7 +45,8 @@ public sealed class MainViewModel : ObservableObject, IAsyncDisposable
             new BotProcessService(),
             new LogTailService(),
             new FolderPickerService(),
-            new DesktopSettingsService())
+            new DesktopSettingsService(),
+            new ThemeService())
     {
     }
 
@@ -51,13 +55,15 @@ public sealed class MainViewModel : ObservableObject, IAsyncDisposable
         BotProcessService botProcessService,
         LogTailService logTailService,
         FolderPickerService folderPickerService,
-        DesktopSettingsService desktopSettingsService)
+        DesktopSettingsService desktopSettingsService,
+        ThemeService themeService)
     {
         _envFileService = envFileService;
         _botProcessService = botProcessService;
         _logTailService = logTailService;
         _folderPickerService = folderPickerService;
         _desktopSettingsService = desktopSettingsService;
+        _themeService = themeService;
 
         _config = new BotEnvironmentConfig
         {
@@ -75,6 +81,8 @@ public sealed class MainViewModel : ObservableObject, IAsyncDisposable
         StopBotCommand = new AsyncRelayCommand(StopBotAsync, () => Directory.Exists(Config.BotRootPath));
         RestartBotCommand = new AsyncRelayCommand(RestartBotAsync, () => Directory.Exists(Config.BotRootPath));
         RefreshCommand = new AsyncRelayCommand(RefreshAsync, () => Directory.Exists(Config.BotRootPath));
+        UseDarkThemeCommand = new AsyncRelayCommand(() => ApplyThemeAsync(ThemeService.DarkTheme));
+        UseLightThemeCommand = new AsyncRelayCommand(() => ApplyThemeAsync(ThemeService.LightTheme));
 
         _refreshTimer = new DispatcherTimer
         {
@@ -114,6 +122,12 @@ public sealed class MainViewModel : ObservableObject, IAsyncDisposable
         private set => SetProperty(ref _streamersSummary, value);
     }
 
+    public string StreamersCountSummary
+    {
+        get => _streamersCountSummary;
+        private set => SetProperty(ref _streamersCountSummary, value);
+    }
+
     public string BotStatus
     {
         get => _botStatus;
@@ -144,6 +158,31 @@ public sealed class MainViewModel : ObservableObject, IAsyncDisposable
         private set => SetProperty(ref _lastRefreshText, value);
     }
 
+    public string CurrentThemeName
+    {
+        get => _currentThemeName;
+        private set
+        {
+            if (SetProperty(ref _currentThemeName, value))
+            {
+                OnPropertyChanged(nameof(ThemeSummary));
+                OnPropertyChanged(nameof(ThemeDescription));
+                OnPropertyChanged(nameof(DarkThemeButtonText));
+                OnPropertyChanged(nameof(LightThemeButtonText));
+            }
+        }
+    }
+
+    public string ThemeSummary => CurrentThemeName == ThemeService.LightTheme ? "Светлая" : "Тёмная";
+
+    public string ThemeDescription => CurrentThemeName == ThemeService.LightTheme
+        ? "Лёгкая дневная тема с чистыми карточками"
+        : "Контрастная ночная тема для долгой работы";
+
+    public string DarkThemeButtonText => CurrentThemeName == ThemeService.DarkTheme ? "Тёмная ✓" : "Тёмная";
+
+    public string LightThemeButtonText => CurrentThemeName == ThemeService.LightTheme ? "Светлая ✓" : "Светлая";
+
     public Brush StatusBrush
     {
         get => _statusBrush;
@@ -168,6 +207,10 @@ public sealed class MainViewModel : ObservableObject, IAsyncDisposable
 
     public ICommand RefreshCommand { get; }
 
+    public ICommand UseDarkThemeCommand { get; }
+
+    public ICommand UseLightThemeCommand { get; }
+
     public async Task InitializeAsync()
     {
         if (_isInitialized)
@@ -178,6 +221,8 @@ public sealed class MainViewModel : ObservableObject, IAsyncDisposable
         _isInitialized = true;
 
         var settings = await _desktopSettingsService.LoadAsync();
+        await ApplyThemeAsync(settings.Theme, announce: false, persist: false);
+
         var candidateRoot = Directory.Exists(settings.BotRootPath)
             ? settings.BotRootPath
             : Config.BotRootPath;
@@ -211,7 +256,7 @@ public sealed class MainViewModel : ObservableObject, IAsyncDisposable
             Config = loaded;
             await SaveDesktopSettingsAsync();
             await RefreshAsync(silent: true);
-            SetInfo("Конфиг загружен. Можно запускать бота или менять настройки.");
+            SetInfo("Конфиг загружен. Всё готово: проверь канал, стримеров и запускай бота.");
         }
         catch (Exception ex)
         {
@@ -244,7 +289,7 @@ public sealed class MainViewModel : ObservableObject, IAsyncDisposable
             var status = await _botProcessService.StartAsync(Config.BotRootPath);
             ApplyProcessStatus(status);
             await RefreshAsync(silent: true);
-            SetInfo("Бот запущен. Уведомления будут отправляться в указанный Telegram-канал.");
+            SetInfo("Бот запущен. Уведомления уйдут в выбранный Telegram-канал.");
         }
         catch (Exception ex)
         {
@@ -352,6 +397,23 @@ public sealed class MainViewModel : ObservableObject, IAsyncDisposable
         _folderPickerService.OpenInExplorer(path);
     }
 
+    private async Task ApplyThemeAsync(string? themeName, bool announce = true, bool persist = true)
+    {
+        var normalized = _themeService.Normalize(themeName);
+        CurrentThemeName = normalized;
+        _themeService.ApplyTheme(normalized);
+
+        if (persist)
+        {
+            await SaveDesktopSettingsAsync();
+        }
+
+        if (announce)
+        {
+            SetInfo($"Тема переключена: {ThemeSummary.ToLowerInvariant()}.");
+        }
+    }
+
     private void ApplyProcessStatus(BotProcessStatus status)
     {
         BotStatus = status.StatusText;
@@ -371,6 +433,12 @@ public sealed class MainViewModel : ObservableObject, IAsyncDisposable
         StreamersSummary = streamers.Count == 0
             ? "Стримеры не указаны"
             : string.Join(", ", streamers);
+        StreamersCountSummary = streamers.Count switch
+        {
+            0 => "0 стримеров",
+            1 => "1 стример",
+            _ => $"{streamers.Count} стримера(ов)",
+        };
     }
 
     private void HandleConfigPropertyChanged(object? sender, PropertyChangedEventArgs e)
@@ -387,6 +455,7 @@ public sealed class MainViewModel : ObservableObject, IAsyncDisposable
         await _desktopSettingsService.SaveAsync(new DesktopSettings
         {
             BotRootPath = Config.BotRootPath,
+            Theme = CurrentThemeName,
         });
     }
 
@@ -451,4 +520,3 @@ public sealed class MainViewModel : ObservableObject, IAsyncDisposable
         return Environment.CurrentDirectory;
     }
 }
-
