@@ -1,9 +1,9 @@
 ﻿# Telegram Bot: Twitch Stream Notifier + WPF Manager
 
-Готовый проект, который состоит из двух частей:
+В этом репозитории я собрал две части одного проекта:
 
-- Python-бот на `aiogram`, отслеживающий Twitch-стримы и отправляющий уведомления в Telegram-канал
-- Windows desktop-приложение на `WPF`, через которое удобно запускать бота, редактировать `.env`, смотреть логи и управлять настройками
+- Python-бот на `aiogram`, который отслеживает Twitch-стримы и отправляет уведомления в Telegram-канал
+- desktop-приложение на `WPF`, через которое удобно запускать бота, редактировать `.env`, смотреть живой лог и управлять настройками без ручной правки файлов
 
 ## Что умеет проект
 
@@ -12,22 +12,22 @@
 - отслеживает один или несколько Twitch-каналов через Twitch Helix API
 - отправляет уведомление в Telegram-канал при старте стрима
 - добавляет inline-кнопку `Смотреть стрим`
-- не шлёт дубликаты для одного и того же эфира
+- не отправляет дубликаты для одного и того же эфира
 - сбрасывает статус после завершения стрима
 - поддерживает команды `/start`, `/status`, `/streamers`, `/add`, `/remove`, `/help`
 - автоматически получает и обновляет Twitch access token
-- ведёт лог в консоль и файл
+- пишет лог в консоль и файл
 - сохраняет состояние между перезапусками в `data/state.json`
 
 ### WPF desktop-приложение
 
-- позволяет выбрать папку Python-проекта
+- выбирает папку Python-проекта
 - читает и редактирует `.env`
-- показывает, в какой Telegram-канал уходят уведомления
+- показывает Telegram-канал для уведомлений
 - показывает Twitch-стримеров из конфига
 - запускает, останавливает и перезапускает Python-бота
-- показывает статус процесса
-- показывает последние строки из `logs/bot.log`
+- показывает статус процесса и путь к интерпретатору
+- ведёт живой лог по `bot.log`, `stderr.log` и `stdout.log`
 - поддерживает светлую и тёмную тему
 - собирается в self-contained `EXE` для Windows
 
@@ -80,41 +80,40 @@ WPF-проект лежит в `desktop/TwitchBotManager`.
 ### Что можно делать через UI
 
 - указывать путь к папке бота
-- редактировать `TELEGRAM_BOT_TOKEN`, `TELEGRAM_CHANNEL_ID`, `TWITCH_CLIENT_ID`, `TWITCH_CLIENT_SECRET`
+- менять `TELEGRAM_BOT_TOKEN`, `TELEGRAM_CHANNEL_ID`, `TWITCH_CLIENT_ID`, `TWITCH_CLIENT_SECRET`
 - менять список Twitch-стримеров
-- запускать и останавливать Python-бота кнопками
-- смотреть лог и текущий статус
+- запускать, останавливать и перезапускать Python-бота кнопками
+- смотреть живой лог в реальном времени
 - переключать тему интерфейса: светлая / тёмная
 
 ## Готовый EXE для Windows
 
-В релизах GitHub доступна уже собранная self-contained версия desktop-приложения.
+В релизах GitHub лежит уже собранная self-contained версия desktop-приложения.
 
-### Как установить EXE
+### Установка EXE
 
-1. Открой страницу релиза на GitHub.
-2. Скачай `TwitchBotManager-win-x64.zip`.
-3. Распакуй архив в отдельную папку, например `C:\TwitchBotManager`.
-4. Запусти `TwitchBotManager.exe`.
-5. В приложении укажи путь к папке Python-бота, где лежат `main.py` и `.env`.
-6. Проверь токены и настройки.
-7. Нажми кнопку запуска бота.
+1. Скачать `TwitchBotManager-win-x64.zip` из раздела Releases.
+2. Распаковать архив в отдельную папку, например `C:\TwitchBotManager`.
+3. Запустить `TwitchBotManager.exe`.
+4. В приложении указать путь к папке Python-бота, где лежат `main.py` и `.env`.
+5. Проверить токены и настройки.
+6. Нажать кнопку запуска бота.
 
 ### Важно для EXE
 
-- Это self-contained сборка, поэтому отдельный `.NET Runtime` ставить не нужно.
-- Лучше запускать приложение из распакованной папки, а не напрямую из архива.
-- Если Windows SmartScreen покажет предупреждение, нажми `Подробнее`, затем `Выполнить в любом случае`.
+- Это self-contained сборка, отдельный `.NET Runtime` не требуется.
+- Приложение лучше запускать из распакованной папки, а не напрямую из архива.
+- Если Windows SmartScreen покажет предупреждение, нужно нажать `Подробнее`, затем `Выполнить в любом случае`.
 
 ## Быстрый старт для Python-бота
 
-### 1. Создай `.env`
+### 1. Создание `.env`
 
 ```powershell
 Copy-Item .env.example .env
 ```
 
-### 2. Заполни `.env`
+### 2. Пример `.env`
 
 ```env
 TELEGRAM_BOT_TOKEN=1234567890:YOUR_TELEGRAM_BOT_TOKEN
@@ -132,7 +131,7 @@ LOG_FILE=logs/bot.log
 TELEGRAM_ADMIN_IDS=123456789,987654321
 ```
 
-### 3. Установи зависимости
+### 3. Установка зависимостей
 
 ```powershell
 python -m venv .venv
@@ -141,7 +140,7 @@ python -m pip install --upgrade pip
 pip install -r requirements.txt
 ```
 
-### 4. Запусти бота
+### 4. Запуск бота
 
 ```powershell
 python main.py
@@ -153,15 +152,15 @@ python main.py
 .\.venv\Scripts\python.exe main.py
 ```
 
-## Запуск через WPF UI
+## Запуск WPF из исходников
 
-### Запуск из исходников
+### Через `dotnet run`
 
 ```powershell
 dotnet run --project .\desktop\TwitchBotManager\TwitchBotManager.csproj
 ```
 
-### Сборка решения
+### Сборка solution
 
 ```powershell
 dotnet build .\TwitchBotManager.sln
@@ -179,7 +178,7 @@ dotnet publish .\desktop\TwitchBotManager\TwitchBotManager.csproj `
   -o .\desktop\publish\TwitchBotManager-win-x64
 ```
 
-Основной файл запуска после публикации:
+Файл запуска после публикации:
 
 ```text
 desktop/publish/TwitchBotManager-win-x64/TwitchBotManager.exe
@@ -187,47 +186,47 @@ desktop/publish/TwitchBotManager-win-x64/TwitchBotManager.exe
 
 ## Запуск в VS Code
 
-1. Открой проект в VS Code.
-2. Выбери интерпретатор Python из `.venv`.
-3. Убедись, что `.env` заполнен.
-4. Запусти `python main.py`.
+1. Открыть проект в VS Code.
+2. Выбрать интерпретатор Python из `.venv`.
+3. Убедиться, что `.env` заполнен.
+4. Запустить `python main.py`.
 
 ## Запуск в Visual Studio / Rider
 
-1. Открой `TwitchBotManager.sln`.
-2. Выбери проект `desktop/TwitchBotManager`.
-3. Нажми `Run` или `F5`.
-4. Внутри приложения укажи путь к корню Python-проекта.
-5. При желании выбери светлую или тёмную тему.
+1. Открыть `TwitchBotManager.sln`.
+2. Выбрать проект `desktop/TwitchBotManager`.
+3. Нажать `Run` или `F5`.
+4. Внутри приложения указать путь к корню Python-проекта.
+5. При необходимости переключить тему интерфейса.
 
 ## Настройка Telegram
 
-### Как создать бота через BotFather
+### Создание бота через BotFather
 
-1. Открой Telegram.
-2. Найди `@BotFather`.
-3. Отправь `/newbot`.
-4. Укажи имя и username бота.
-5. Сохрани токен и вставь его в `TELEGRAM_BOT_TOKEN`.
+1. Открыть Telegram.
+2. Найти `@BotFather`.
+3. Отправить `/newbot`.
+4. Указать имя и username бота.
+5. Сохранить токен и вставить его в `TELEGRAM_BOT_TOKEN`.
 
-### Как настроить канал
+### Настройка канала
 
-1. Создай Telegram-канал или используй существующий.
-2. Добавь бота в канал как администратора.
-3. Выдай право на отправку сообщений.
-4. Укажи `TELEGRAM_CHANNEL_ID`.
+1. Создать Telegram-канал или использовать существующий.
+2. Добавить бота в канал как администратора.
+3. Выдать право на отправку сообщений.
+4. Указать `TELEGRAM_CHANNEL_ID`.
 
 ## Настройка Twitch API
 
-1. Открой `https://dev.twitch.tv/console/apps`.
-2. Создай приложение.
-3. Укажи `OAuth Redirect URL`, например `http://localhost`.
-4. Скопируй `Client ID` и `Client Secret`.
-5. Запиши их в `.env`.
+1. Открыть `https://dev.twitch.tv/console/apps`.
+2. Создать приложение.
+3. Указать `OAuth Redirect URL`, например `http://localhost`.
+4. Скопировать `Client ID` и `Client Secret`.
+5. Записать их в `.env`.
 
-### Как проект получает токен Twitch
+### Как бот получает Twitch access token
 
-Проект использует `Client Credentials Grant` и сам обновляет access token.
+Бот использует `Client Credentials Grant` и сам обновляет access token.
 
 Пример ручного запроса:
 
@@ -249,6 +248,8 @@ curl -X POST "https://id.twitch.tv/oauth2/token" \
 ## Где смотреть логи
 
 - `logs/bot.log`
+- `runtime/stderr.log`
+- `runtime/stdout.log`
 - `data/state.json`
 
 ## Частые проблемы
@@ -285,9 +286,8 @@ curl -X POST "https://id.twitch.tv/oauth2/token" \
 - Авторские права принадлежат владельцу репозитория `MaminHaker228`.
 - Используется закрытая лицензия `All Rights Reserved`.
 - Копирование, переработка, распространение и использование кода без письменного разрешения правообладателя запрещены.
-- Если репозиторий остаётся публичным на GitHub, другие пользователи всё равно смогут просматривать его содержимое и делать fork средствами GitHub. Для более жёсткого ограничения доступа репозиторий лучше сделать приватным.
 
-Подробности смотри в файле `LICENSE`.
+Подробности описаны в `LICENSE`.
 
 ## Официальные ссылки
 

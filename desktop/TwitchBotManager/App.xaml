@@ -10,7 +10,7 @@
             </ResourceDictionary.MergedDictionaries>
 
             <Style TargetType="Window">
-                <Setter Property="Background" Value="{DynamicResource WindowBackgroundBrush}" />
+                <Setter Property="Background" Value="{DynamicResource AppBackgroundBrush}" />
                 <Setter Property="Foreground" Value="{DynamicResource TextBrush}" />
                 <Setter Property="FontFamily" Value="Segoe UI" />
                 <Setter Property="TextOptions.TextFormattingMode" Value="Display" />

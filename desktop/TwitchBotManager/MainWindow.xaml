@@ -10,7 +10,7 @@
         MinWidth="1260"
         MinHeight="820"
         WindowStartupLocation="CenterScreen">
-    <Grid>
+    <Grid Background="{DynamicResource AppBackgroundBrush}">
         <Ellipse Width="420"
                  Height="420"
                  Fill="{DynamicResource DecorativeBrush}"
@@ -335,17 +335,41 @@
                                 <RowDefinition Height="Auto" />
                             </Grid.RowDefinitions>
 
-                            <DockPanel>
-                                <TextBlock DockPanel.Dock="Left" Style="{StaticResource SectionCaptionStyle}" Text="ЖИВОЙ ЛОГ" />
-                                <Button DockPanel.Dock="Right"
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*" />
+                                    <ColumnDefinition Width="Auto" />
+                                </Grid.ColumnDefinitions>
+
+                                <StackPanel>
+                                    <TextBlock Style="{StaticResource SectionCaptionStyle}" Text="ЖИВОЙ ЛОГ" />
+                                    <WrapPanel Margin="0,10,0,0">
+                                        <Border Style="{StaticResource BadgeBorderStyle}" Margin="0,0,10,0">
+                                            <StackPanel Orientation="Horizontal">
+                                                <Ellipse Width="10"
+                                                         Height="10"
+                                                         Fill="{DynamicResource SuccessBrush}"
+                                                         Margin="0,0,8,0"
+                                                         VerticalAlignment="Center" />
+                                                <TextBlock FontWeight="SemiBold" Text="{Binding LiveLogMode}" />
+                                            </StackPanel>
+                                        </Border>
+                                        <TextBlock VerticalAlignment="Center"
+                                                   Style="{StaticResource SectionNoteStyle}"
+                                                   Text="{Binding LiveLogStatus}" />
+                                    </WrapPanel>
+                                </StackPanel>
+
+                                <Button Grid.Column="1"
                                         Style="{StaticResource GhostButtonStyle}"
                                         Margin="10,0,0,0"
                                         Padding="12,8"
                                         Content="Открыть папку логов"
                                         Command="{Binding OpenLogsFolderCommand}" />
-                            </DockPanel>
+                            </Grid>
 
-                            <TextBox Grid.Row="1"
+                            <TextBox x:Name="LogTextBox"
+                                     Grid.Row="1"
                                      Margin="0,16,0,0"
                                      FontFamily="Cascadia Mono, Consolas"
                                      FontSize="13"
@@ -356,10 +380,10 @@
                                      IsReadOnly="True"
                                      Text="{Binding LogContent, Mode=OneWay}" />
 
-                            <TextBlock Grid.Row="2"
-                                       Margin="0,12,0,0"
-                                       Style="{StaticResource SectionNoteStyle}"
-                                       Text="{Binding LastRefreshText}" />
+                            <StackPanel Grid.Row="2" Margin="0,12,0,0">
+                                <TextBlock Style="{StaticResource SectionNoteStyle}" Text="{Binding LastRefreshText}" />
+                                <TextBlock Margin="0,4,0,0" Style="{StaticResource SectionNoteStyle}" Text="{Binding LogSourceSummary}" />
+                            </StackPanel>
                         </Grid>
                     </Border>
                 </Grid>

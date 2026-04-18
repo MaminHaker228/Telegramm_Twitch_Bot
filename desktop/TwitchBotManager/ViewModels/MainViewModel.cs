@@ -35,6 +35,9 @@ public sealed class MainViewModel : ObservableObject, IAsyncDisposable
     private string _statusMessage = "Заполни настройки и нажми «Запустить бота».";
     private string _logContent = "Логи пока не загружены.";
     private string _lastRefreshText = "Еще не обновлялось";
+    private string _liveLogStatus = "Живой лог ожидает путь к проекту";
+    private string _liveLogMode = "AUTO";
+    private string _logSourceSummary = "Источники: logs/bot.log, runtime/stderr.log, runtime/stdout.log";
     private string _currentThemeName = ThemeService.DarkTheme;
     private Brush _statusBrush = StoppedBrush;
     private bool _isInitialized;
@@ -64,6 +67,7 @@ public sealed class MainViewModel : ObservableObject, IAsyncDisposable
         _folderPickerService = folderPickerService;
         _desktopSettingsService = desktopSettingsService;
         _themeService = themeService;
+        _logTailService.LogFilesChanged += HandleLogFilesChanged;
 
         _config = new BotEnvironmentConfig
         {
@@ -158,6 +162,24 @@ public sealed class MainViewModel : ObservableObject, IAsyncDisposable
         private set => SetProperty(ref _lastRefreshText, value);
     }
 
+    public string LiveLogStatus
+    {
+        get => _liveLogStatus;
+        private set => SetProperty(ref _liveLogStatus, value);
+    }
+
+    public string LiveLogMode
+    {
+        get => _liveLogMode;
+        private set => SetProperty(ref _liveLogMode, value);
+    }
+
+    public string LogSourceSummary
+    {
+        get => _logSourceSummary;
+        private set => SetProperty(ref _logSourceSummary, value);
+    }
+
     public string CurrentThemeName
     {
         get => _currentThemeName;
@@ -237,6 +259,9 @@ public sealed class MainViewModel : ObservableObject, IAsyncDisposable
         _refreshTimer.Stop();
         _refreshTimer.Tick -= RefreshTimerOnTick;
         _config.PropertyChanged -= HandleConfigPropertyChanged;
+        _logTailService.LogFilesChanged -= HandleLogFilesChanged;
+        _logTailService.StopWatching();
+        _logTailService.Dispose();
         _refreshLock.Dispose();
         await Task.CompletedTask;
     }
@@ -254,6 +279,7 @@ public sealed class MainViewModel : ObservableObject, IAsyncDisposable
             var loaded = await _envFileService.LoadAsync(Config.BotRootPath);
             loaded.BotRootPath = Config.BotRootPath;
             Config = loaded;
+            RestartLogMonitoring();
             await SaveDesktopSettingsAsync();
             await RefreshAsync(silent: true);
             SetInfo("Конфиг загружен. Всё готово: проверь канал, стримеров и запускай бота.");
@@ -356,6 +382,7 @@ public sealed class MainViewModel : ObservableObject, IAsyncDisposable
             var status = _botProcessService.GetStatus(Config.BotRootPath);
             ApplyProcessStatus(status);
             LogContent = await _logTailService.ReadTailAsync(Config.BotRootPath);
+            LogSourceSummary = _logTailService.WatchedFilesSummary;
             LastRefreshText = $"Обновлено: {DateTime.Now:dd.MM.yyyy HH:mm:ss}";
 
             if (!silent)
@@ -446,8 +473,41 @@ public sealed class MainViewModel : ObservableObject, IAsyncDisposable
         UpdateSummaries();
         if (e.PropertyName is nameof(BotEnvironmentConfig.BotRootPath))
         {
+            RestartLogMonitoring();
             RaiseCommandStates();
         }
+    }
+
+    private void RestartLogMonitoring()
+    {
+        if (Directory.Exists(Config.BotRootPath))
+        {
+            _logTailService.StartWatching(Config.BotRootPath);
+            LiveLogMode = "LIVE";
+            LiveLogStatus = "Лог обновляется автоматически при изменении bot.log / stderr.log / stdout.log.";
+            LogSourceSummary = _logTailService.WatchedFilesSummary;
+            return;
+        }
+
+        _logTailService.StopWatching();
+        LiveLogMode = "AUTO";
+        LiveLogStatus = "Живой лог ожидает корректный путь к проекту.";
+        LogSourceSummary = "Источники: logs/bot.log, runtime/stderr.log, runtime/stdout.log";
+    }
+
+    private void HandleLogFilesChanged(object? sender, EventArgs e)
+    {
+        var dispatcher = System.Windows.Application.Current?.Dispatcher;
+        if (dispatcher is null)
+        {
+            return;
+        }
+
+        _ = dispatcher.BeginInvoke(async () =>
+        {
+            await RefreshAsync(silent: true);
+            LastRefreshText = $"Живой лог: {DateTime.Now:dd.MM.yyyy HH:mm:ss}";
+        });
     }
 
     private async Task SaveDesktopSettingsAsync()
