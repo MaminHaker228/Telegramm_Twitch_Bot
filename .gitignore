@@ -16,6 +16,7 @@ __pycache__/
 .python-version
 bin/
 obj/
+desktop/publish/
 
 # Tool caches
 .pytest_cache/
