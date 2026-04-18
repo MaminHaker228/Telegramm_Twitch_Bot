@@ -245,7 +245,7 @@
                                  VerticalScrollBarVisibility="Auto"
                                  HorizontalScrollBarVisibility="Auto"
                                  IsReadOnly="True"
-                                 Text="{Binding LogContent}" />
+                                 Text="{Binding LogContent, Mode=OneWay}" />
 
                         <TextBlock Grid.Row="2"
                                    Margin="0,12,0,0"
