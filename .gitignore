@@ -14,6 +14,8 @@ __pycache__/
 *.pyd
 *.so
 .python-version
+bin/
+obj/
 
 # Tool caches
 .pytest_cache/
@@ -30,5 +32,6 @@ runtime/
 # IDE and OS files
 .vscode/
 .idea/
+.vs/
 .DS_Store
 Thumbs.db

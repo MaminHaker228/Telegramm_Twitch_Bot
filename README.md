@@ -26,6 +26,7 @@
 
 ```text
 .
+├── TwitchBotManager.sln
 ├── app
 │   ├── __init__.py
 │   ├── config.py
@@ -36,11 +37,36 @@
 │   ├── storage.py
 │   ├── telegram_bot.py
 │   └── twitch.py
+├── desktop
+│   └── TwitchBotManager
+│       ├── Infrastructure
+│       ├── Models
+│       ├── Services
+│       ├── ViewModels
+│       ├── App.xaml
+│       ├── MainWindow.xaml
+│       └── TwitchBotManager.csproj
 ├── .env.example
 ├── main.py
 ├── requirements.txt
 └── README.md
 ```
+
+## Desktop UI на WPF
+
+В репозитории есть отдельное Windows-приложение на WPF для удобного управления ботом.
+
+Что умеет desktop-приложение:
+
+- выбирать папку Python-проекта с ботом
+- читать и редактировать `.env`
+- показывать, в какой Telegram-канал уходят уведомления
+- показывать список Twitch-стримеров из конфига
+- запускать, останавливать и перезапускать Python-бота
+- показывать путь до используемого Python
+- подтягивать последние строки из `logs/bot.log`
+
+WPF-проект лежит в `desktop/TwitchBotManager`.
 
 ## Быстрый старт
 
@@ -108,6 +134,21 @@ pip install -r requirements.txt
 python main.py
 ```
 
+#### Запуск через WPF-панель
+
+Если хочешь управлять ботом через UI:
+
+```powershell
+dotnet run --project .\desktop\TwitchBotManager\TwitchBotManager.csproj
+```
+
+После запуска WPF-приложение позволит:
+
+- выбрать папку `E:\Twitch`
+- загрузить текущий `.env`
+- изменить токены, channel id и Twitch-настройки
+- нажать `Запустить бота` или `Остановить`
+
 После запуска бот:
 
 - проверит настройки из `.env`
@@ -157,6 +198,25 @@ cd E:\Twitch
 
 ```powershell
 python main.py
+```
+
+### Вариант 4. Запуск desktop-приложения из Visual Studio или Rider
+
+1. Открой `TwitchBotManager.sln`.
+2. Выбери проект `desktop/TwitchBotManager`.
+3. Нажми `Run` или `F5`.
+4. Внутри приложения укажи путь к корню Python-проекта, обычно `E:\Twitch`.
+
+### Вариант 5. Сборка WPF-приложения
+
+```powershell
+dotnet build .\TwitchBotManager.sln
+```
+
+Готовый exe после сборки появится здесь:
+
+```text
+desktop/TwitchBotManager/bin/Debug/net8.0-windows/
 ```
 
 ### Как остановить бота
