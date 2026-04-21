@@ -6,9 +6,9 @@
         mc:Ignorable="d"
         Title="Twitch Bot Manager"
         Width="1520"
-        Height="940"
-        MinWidth="1260"
-        MinHeight="820"
+        Height="980"
+        MinWidth="1320"
+        MinHeight="860"
         WindowStartupLocation="CenterScreen">
     <Grid Background="{DynamicResource AppBackgroundBrush}">
         <Ellipse Width="420"
@@ -57,7 +57,7 @@
                         <TextBlock Margin="0,12,0,0"
                                    Style="{StaticResource SectionNoteStyle}"
                                    FontSize="15"
-                                   Text="Интерфейс показывает текущий канал, список стримеров, путь к Python, живой лог и позволяет переключать тему прямо на лету." />
+                                   Text="Интерфейс показывает текущий канал, список стримеров, путь к Python, крупный живой лог и позволяет переключать тему прямо на лету." />
 
                         <WrapPanel Margin="0,18,0,0">
                             <Border Style="{StaticResource BadgeBorderStyle}" Margin="0,0,10,10">
@@ -126,267 +126,302 @@
             </Border>
 
             <Grid Grid.Row="1">
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="2.15*" />
-                    <ColumnDefinition Width="1.15*" />
-                </Grid.ColumnDefinitions>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="1.05*" MinHeight="260" />
+                    <RowDefinition Height="18" />
+                    <RowDefinition Height="0.95*" MinHeight="320" />
+                </Grid.RowDefinitions>
 
-                <ScrollViewer Grid.Column="0"
-                              Margin="0,0,18,0"
-                              VerticalScrollBarVisibility="Auto"
-                              HorizontalScrollBarVisibility="Disabled">
-                    <StackPanel>
-                        <Border Style="{StaticResource CardBorderStyle}" Margin="0,0,0,18">
-                            <StackPanel>
-                                <TextBlock Style="{StaticResource SectionCaptionStyle}" Text="ПРОЕКТ" />
-                                <TextBlock Style="{StaticResource SectionTitleStyle}" Margin="0,8,0,0" Text="Где лежит Python-бот" />
-                                <TextBlock Style="{StaticResource SectionNoteStyle}"
-                                           Margin="0,8,0,0"
-                                           Text="Выбери корень проекта. Приложение будет работать с `main.py`, `.env`, `logs` и `runtime` в этой папке." />
+                <Grid Grid.Row="0">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="1.7*" />
+                        <ColumnDefinition Width="1.1*" />
+                    </Grid.ColumnDefinitions>
 
-                                <TextBlock Style="{StaticResource InputLabelStyle}" Margin="0,18,0,0" Text="Папка проекта" />
-                                <Grid>
-                                    <Grid.ColumnDefinitions>
-                                        <ColumnDefinition Width="*" />
-                                        <ColumnDefinition Width="Auto" />
-                                        <ColumnDefinition Width="Auto" />
-                                    </Grid.ColumnDefinitions>
-
-                                    <TextBox Grid.Column="0" Text="{Binding Config.BotRootPath, UpdateSourceTrigger=PropertyChanged}" />
-                                    <Button Grid.Column="1" Content="Обзор..." Command="{Binding BrowseBotFolderCommand}" />
-                                    <Button Grid.Column="2"
-                                            Style="{StaticResource SecondaryButtonStyle}"
-                                            Content="Открыть"
-                                            Command="{Binding OpenProjectFolderCommand}" />
-                                </Grid>
-                            </StackPanel>
-                        </Border>
-
-                        <Grid Margin="0,0,0,18">
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="*" />
-                                <ColumnDefinition Width="*" />
-                            </Grid.ColumnDefinitions>
-
-                            <Border Grid.Column="0" Style="{StaticResource CardBorderStyle}" Margin="0,0,9,0">
+                    <ScrollViewer Grid.Column="0"
+                                  Margin="0,0,18,0"
+                                  VerticalScrollBarVisibility="Auto"
+                                  HorizontalScrollBarVisibility="Disabled">
+                        <StackPanel>
+                            <Border Style="{StaticResource CardBorderStyle}" Margin="0,0,0,18">
                                 <StackPanel>
-                                    <TextBlock Style="{StaticResource SectionCaptionStyle}" Text="TELEGRAM" />
-                                    <TextBlock Style="{StaticResource SectionTitleStyle}" Margin="0,8,0,0" Text="Канал и токен" />
+                                    <TextBlock Style="{StaticResource SectionCaptionStyle}" Text="ПРОЕКТ" />
+                                    <TextBlock Style="{StaticResource SectionTitleStyle}" Margin="0,8,0,0" Text="Где лежит Python-бот" />
                                     <TextBlock Style="{StaticResource SectionNoteStyle}"
                                                Margin="0,8,0,0"
-                                               Text="Сюда бот будет отправлять карточки о старте стрима." />
+                                               Text="Выбери корень проекта. Приложение будет работать с `main.py`, `.env`, `logs` и `runtime` в этой папке." />
 
-                                    <TextBlock Style="{StaticResource InputLabelStyle}" Margin="0,18,0,0" Text="TELEGRAM_BOT_TOKEN" />
-                                    <TextBox Text="{Binding Config.TelegramBotToken, UpdateSourceTrigger=PropertyChanged}" />
+                                    <TextBlock Style="{StaticResource InputLabelStyle}" Margin="0,18,0,0" Text="Папка проекта" />
+                                    <Grid>
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="*" />
+                                            <ColumnDefinition Width="Auto" />
+                                            <ColumnDefinition Width="Auto" />
+                                        </Grid.ColumnDefinitions>
 
-                                    <TextBlock Style="{StaticResource InputLabelStyle}" Margin="0,14,0,0" Text="TELEGRAM_CHANNEL_ID" />
-                                    <TextBox Text="{Binding Config.TelegramChannelId, UpdateSourceTrigger=PropertyChanged}" />
-
-                                    <TextBlock Style="{StaticResource InputLabelStyle}" Margin="0,14,0,0" Text="TELEGRAM_ADMIN_IDS" />
-                                    <TextBox Text="{Binding Config.TelegramAdminIds, UpdateSourceTrigger=PropertyChanged}" />
+                                        <TextBox Grid.Column="0" Text="{Binding Config.BotRootPath, UpdateSourceTrigger=PropertyChanged}" />
+                                        <Button Grid.Column="1" Content="Обзор..." Command="{Binding BrowseBotFolderCommand}" />
+                                        <Button Grid.Column="2"
+                                                Style="{StaticResource SecondaryButtonStyle}"
+                                                Content="Открыть"
+                                                Command="{Binding OpenProjectFolderCommand}" />
+                                    </Grid>
                                 </StackPanel>
                             </Border>
 
-                            <Border Grid.Column="1" Style="{StaticResource CardBorderStyle}" Margin="9,0,0,0">
+                            <Grid Margin="0,0,0,18">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*" />
+                                    <ColumnDefinition Width="*" />
+                                </Grid.ColumnDefinitions>
+
+                                <Border Grid.Column="0" Style="{StaticResource CardBorderStyle}" Margin="0,0,9,0">
+                                    <StackPanel>
+                                        <TextBlock Style="{StaticResource SectionCaptionStyle}" Text="TELEGRAM" />
+                                        <TextBlock Style="{StaticResource SectionTitleStyle}" Margin="0,8,0,0" Text="Канал и токен" />
+                                        <TextBlock Style="{StaticResource SectionNoteStyle}"
+                                                   Margin="0,8,0,0"
+                                                   Text="Сюда бот будет отправлять карточки о старте стрима." />
+
+                                        <TextBlock Style="{StaticResource InputLabelStyle}" Margin="0,18,0,0" Text="TELEGRAM_BOT_TOKEN" />
+                                        <TextBox Text="{Binding Config.TelegramBotToken, UpdateSourceTrigger=PropertyChanged}" />
+
+                                        <TextBlock Style="{StaticResource InputLabelStyle}" Margin="0,14,0,0" Text="TELEGRAM_CHANNEL_ID" />
+                                        <TextBox Text="{Binding Config.TelegramChannelId, UpdateSourceTrigger=PropertyChanged}" />
+
+                                        <TextBlock Style="{StaticResource InputLabelStyle}" Margin="0,14,0,0" Text="TELEGRAM_ADMIN_IDS" />
+                                        <TextBox Text="{Binding Config.TelegramAdminIds, UpdateSourceTrigger=PropertyChanged}" />
+                                    </StackPanel>
+                                </Border>
+
+                                <Border Grid.Column="1" Style="{StaticResource CardBorderStyle}" Margin="9,0,0,0">
+                                    <StackPanel>
+                                        <TextBlock Style="{StaticResource SectionCaptionStyle}" Text="TWITCH" />
+                                        <TextBlock Style="{StaticResource SectionTitleStyle}" Margin="0,8,0,0" Text="API и стримеры" />
+                                        <TextBlock Style="{StaticResource SectionNoteStyle}"
+                                                   Margin="0,8,0,0"
+                                                   Text="Укажи ключи Twitch и логины стримеров, которых нужно мониторить." />
+
+                                        <TextBlock Style="{StaticResource InputLabelStyle}" Margin="0,18,0,0" Text="TWITCH_CLIENT_ID" />
+                                        <TextBox Text="{Binding Config.TwitchClientId, UpdateSourceTrigger=PropertyChanged}" />
+
+                                        <TextBlock Style="{StaticResource InputLabelStyle}" Margin="0,14,0,0" Text="TWITCH_CLIENT_SECRET" />
+                                        <TextBox Text="{Binding Config.TwitchClientSecret, UpdateSourceTrigger=PropertyChanged}" />
+
+                                        <TextBlock Style="{StaticResource InputLabelStyle}" Margin="0,14,0,0" Text="TWITCH_USERNAME" />
+                                        <TextBox Text="{Binding Config.TwitchUsername, UpdateSourceTrigger=PropertyChanged}" />
+
+                                        <TextBlock Style="{StaticResource InputLabelStyle}" Margin="0,14,0,0" Text="TWITCH_USERNAMES" />
+                                        <TextBox Height="86"
+                                                 AcceptsReturn="True"
+                                                 TextWrapping="Wrap"
+                                                 VerticalScrollBarVisibility="Auto"
+                                                 Text="{Binding Config.TwitchUsernames, UpdateSourceTrigger=PropertyChanged}" />
+                                    </StackPanel>
+                                </Border>
+                            </Grid>
+
+                            <Grid Margin="0,0,0,18">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*" />
+                                    <ColumnDefinition Width="*" />
+                                </Grid.ColumnDefinitions>
+
+                                <Border Grid.Column="0" Style="{StaticResource CardBorderStyle}" Margin="0,0,9,0">
+                                    <StackPanel>
+                                        <TextBlock Style="{StaticResource SectionCaptionStyle}" Text="МОНИТОРИНГ" />
+                                        <TextBlock Style="{StaticResource SectionTitleStyle}" Margin="0,8,0,0" Text="Периодичность и retry" />
+                                        <TextBlock Style="{StaticResource SectionNoteStyle}" Margin="0,8,0,0" Text="Эти настройки влияют на частоту опроса Twitch и устойчивость к временным сбоям." />
+
+                                        <TextBlock Style="{StaticResource InputLabelStyle}" Margin="0,18,0,0" Text="CHECK_INTERVAL_SECONDS" />
+                                        <TextBox Text="{Binding Config.CheckIntervalSeconds, UpdateSourceTrigger=PropertyChanged}" />
+
+                                        <TextBlock Style="{StaticResource InputLabelStyle}" Margin="0,14,0,0" Text="REQUEST_TIMEOUT_SECONDS" />
+                                        <TextBox Text="{Binding Config.RequestTimeoutSeconds, UpdateSourceTrigger=PropertyChanged}" />
+
+                                        <TextBlock Style="{StaticResource InputLabelStyle}" Margin="0,14,0,0" Text="MAX_RETRIES" />
+                                        <TextBox Text="{Binding Config.MaxRetries, UpdateSourceTrigger=PropertyChanged}" />
+                                    </StackPanel>
+                                </Border>
+
+                                <Border Grid.Column="1" Style="{StaticResource CardBorderStyle}" Margin="9,0,0,0">
+                                    <StackPanel>
+                                        <TextBlock Style="{StaticResource SectionCaptionStyle}" Text="ПУТИ И ЛОГИ" />
+                                        <TextBlock Style="{StaticResource SectionTitleStyle}" Margin="0,8,0,0" Text="Служебные параметры" />
+                                        <TextBlock Style="{StaticResource SectionNoteStyle}" Margin="0,8,0,0" Text="Обычно менять не нужно, но здесь можно сразу увидеть, какой файл используется как основной лог." />
+
+                                        <TextBlock Style="{StaticResource InputLabelStyle}" Margin="0,18,0,0" Text="LOG_LEVEL" />
+                                        <TextBox Text="{Binding Config.LogLevel, UpdateSourceTrigger=PropertyChanged}" />
+
+                                        <TextBlock Style="{StaticResource InputLabelStyle}" Margin="0,14,0,0" Text="STATE_FILE" />
+                                        <TextBox Text="{Binding Config.StateFile, UpdateSourceTrigger=PropertyChanged}" />
+
+                                        <TextBlock Style="{StaticResource InputLabelStyle}" Margin="0,14,0,0" Text="LOG_FILE" />
+                                        <TextBox Text="{Binding Config.LogFile, UpdateSourceTrigger=PropertyChanged}" />
+                                    </StackPanel>
+                                </Border>
+                            </Grid>
+
+                            <Border Style="{StaticResource CardBorderStyle}">
                                 <StackPanel>
-                                    <TextBlock Style="{StaticResource SectionCaptionStyle}" Text="TWITCH" />
-                                    <TextBlock Style="{StaticResource SectionTitleStyle}" Margin="0,8,0,0" Text="API и стримеры" />
+                                    <TextBlock Style="{StaticResource SectionCaptionStyle}" Text="ДЕЙСТВИЯ" />
+                                    <TextBlock Style="{StaticResource SectionTitleStyle}" Margin="0,8,0,0" Text="Сохрани, перезапусти, проверь" />
                                     <TextBlock Style="{StaticResource SectionNoteStyle}"
                                                Margin="0,8,0,0"
-                                               Text="Укажи ключи Twitch и логины стримеров, которых нужно мониторить." />
+                                               Text="Самый безопасный сценарий: сначала сохраняй `.env`, потом запускай или перезапускай бота. Ниже всегда виден крупный живой лог." />
 
-                                    <TextBlock Style="{StaticResource InputLabelStyle}" Margin="0,18,0,0" Text="TWITCH_CLIENT_ID" />
-                                    <TextBox Text="{Binding Config.TwitchClientId, UpdateSourceTrigger=PropertyChanged}" />
-
-                                    <TextBlock Style="{StaticResource InputLabelStyle}" Margin="0,14,0,0" Text="TWITCH_CLIENT_SECRET" />
-                                    <TextBox Text="{Binding Config.TwitchClientSecret, UpdateSourceTrigger=PropertyChanged}" />
-
-                                    <TextBlock Style="{StaticResource InputLabelStyle}" Margin="0,14,0,0" Text="TWITCH_USERNAME" />
-                                    <TextBox Text="{Binding Config.TwitchUsername, UpdateSourceTrigger=PropertyChanged}" />
-
-                                    <TextBlock Style="{StaticResource InputLabelStyle}" Margin="0,14,0,0" Text="TWITCH_USERNAMES" />
-                                    <TextBox Height="86"
-                                             AcceptsReturn="True"
-                                             TextWrapping="Wrap"
-                                             VerticalScrollBarVisibility="Auto"
-                                             Text="{Binding Config.TwitchUsernames, UpdateSourceTrigger=PropertyChanged}" />
+                                    <WrapPanel Margin="0,18,0,0">
+                                        <Button Content="Сохранить .env" Command="{Binding SaveConfigCommand}" />
+                                        <Button Style="{StaticResource SecondaryButtonStyle}" Content="Загрузить .env" Command="{Binding LoadConfigCommand}" />
+                                        <Button Style="{StaticResource SecondaryButtonStyle}" Content="Перезапустить бота" Command="{Binding RestartBotCommand}" />
+                                        <Button Style="{StaticResource GhostButtonStyle}" Content="Открыть папку логов" Command="{Binding OpenLogsFolderCommand}" />
+                                    </WrapPanel>
                                 </StackPanel>
                             </Border>
-                        </Grid>
-
-                        <Grid Margin="0,0,0,18">
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="*" />
-                                <ColumnDefinition Width="*" />
-                            </Grid.ColumnDefinitions>
-
-                            <Border Grid.Column="0" Style="{StaticResource CardBorderStyle}" Margin="0,0,9,0">
-                                <StackPanel>
-                                    <TextBlock Style="{StaticResource SectionCaptionStyle}" Text="МОНИТОРИНГ" />
-                                    <TextBlock Style="{StaticResource SectionTitleStyle}" Margin="0,8,0,0" Text="Периодичность и retry" />
-                                    <TextBlock Style="{StaticResource SectionNoteStyle}" Margin="0,8,0,0" Text="Эти настройки влияют на частоту опроса Twitch и устойчивость к временным сбоям." />
-
-                                    <TextBlock Style="{StaticResource InputLabelStyle}" Margin="0,18,0,0" Text="CHECK_INTERVAL_SECONDS" />
-                                    <TextBox Text="{Binding Config.CheckIntervalSeconds, UpdateSourceTrigger=PropertyChanged}" />
-
-                                    <TextBlock Style="{StaticResource InputLabelStyle}" Margin="0,14,0,0" Text="REQUEST_TIMEOUT_SECONDS" />
-                                    <TextBox Text="{Binding Config.RequestTimeoutSeconds, UpdateSourceTrigger=PropertyChanged}" />
-
-                                    <TextBlock Style="{StaticResource InputLabelStyle}" Margin="0,14,0,0" Text="MAX_RETRIES" />
-                                    <TextBox Text="{Binding Config.MaxRetries, UpdateSourceTrigger=PropertyChanged}" />
-                                </StackPanel>
-                            </Border>
-
-                            <Border Grid.Column="1" Style="{StaticResource CardBorderStyle}" Margin="9,0,0,0">
-                                <StackPanel>
-                                    <TextBlock Style="{StaticResource SectionCaptionStyle}" Text="ПУТИ И ЛОГИ" />
-                                    <TextBlock Style="{StaticResource SectionTitleStyle}" Margin="0,8,0,0" Text="Служебные параметры" />
-                                    <TextBlock Style="{StaticResource SectionNoteStyle}" Margin="0,8,0,0" Text="Обычно менять не нужно, но удобно держать всё под рукой в одном окне." />
-
-                                    <TextBlock Style="{StaticResource InputLabelStyle}" Margin="0,18,0,0" Text="LOG_LEVEL" />
-                                    <TextBox Text="{Binding Config.LogLevel, UpdateSourceTrigger=PropertyChanged}" />
-
-                                    <TextBlock Style="{StaticResource InputLabelStyle}" Margin="0,14,0,0" Text="STATE_FILE" />
-                                    <TextBox Text="{Binding Config.StateFile, UpdateSourceTrigger=PropertyChanged}" />
-
-                                    <TextBlock Style="{StaticResource InputLabelStyle}" Margin="0,14,0,0" Text="LOG_FILE" />
-                                    <TextBox Text="{Binding Config.LogFile, UpdateSourceTrigger=PropertyChanged}" />
-                                </StackPanel>
-                            </Border>
-                        </Grid>
-
-                        <Border Style="{StaticResource CardBorderStyle}">
-                            <StackPanel>
-                                <TextBlock Style="{StaticResource SectionCaptionStyle}" Text="ДЕЙСТВИЯ" />
-                                <TextBlock Style="{StaticResource SectionTitleStyle}" Margin="0,8,0,0" Text="Сохрани, перезапусти, проверь" />
-                                <TextBlock Style="{StaticResource SectionNoteStyle}"
-                                           Margin="0,8,0,0"
-                                           Text="Самый безопасный сценарий: сначала сохраняй `.env`, потом запускай или перезапускай бота. Для контроля используй живой лог справа." />
-
-                                <WrapPanel Margin="0,18,0,0">
-                                    <Button Content="Сохранить .env" Command="{Binding SaveConfigCommand}" />
-                                    <Button Style="{StaticResource SecondaryButtonStyle}" Content="Загрузить .env" Command="{Binding LoadConfigCommand}" />
-                                    <Button Style="{StaticResource SecondaryButtonStyle}" Content="Перезапустить бота" Command="{Binding RestartBotCommand}" />
-                                    <Button Style="{StaticResource GhostButtonStyle}" Content="Открыть папку логов" Command="{Binding OpenLogsFolderCommand}" />
-                                </WrapPanel>
-                            </StackPanel>
-                        </Border>
-                    </StackPanel>
-                </ScrollViewer>
-
-                <Grid Grid.Column="1">
-                    <Grid.RowDefinitions>
-                        <RowDefinition Height="Auto" />
-                        <RowDefinition Height="Auto" />
-                        <RowDefinition Height="Auto" />
-                        <RowDefinition Height="*" />
-                    </Grid.RowDefinitions>
-
-                    <Border Grid.Row="0" Style="{StaticResource CardBorderStyle}" Margin="0,0,0,18">
-                        <Grid>
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="*" />
-                                <ColumnDefinition Width="*" />
-                            </Grid.ColumnDefinitions>
-
-                            <StackPanel Margin="0,0,10,0">
-                                <TextBlock Style="{StaticResource SectionCaptionStyle}" Text="КУДА УЙДЁТ УВЕДОМЛЕНИЕ" />
-                                <TextBlock Margin="0,10,0,0" FontSize="20" FontWeight="SemiBold" Text="{Binding DestinationSummary}" TextWrapping="Wrap" />
-                                <TextBlock Margin="0,8,0,0" Style="{StaticResource SectionNoteStyle}" Text="Telegram-канал, который сейчас прописан в конфиге." />
-                            </StackPanel>
-
-                            <StackPanel Grid.Column="1" Margin="10,0,0,0">
-                                <TextBlock Style="{StaticResource SectionCaptionStyle}" Text="ТЕМА" />
-                                <TextBlock Margin="0,10,0,0" FontSize="20" FontWeight="SemiBold" Text="{Binding ThemeSummary}" />
-                                <TextBlock Margin="0,8,0,0" Style="{StaticResource SectionNoteStyle}" Text="{Binding ThemeDescription}" />
-                            </StackPanel>
-                        </Grid>
-                    </Border>
-
-                    <Border Grid.Row="1" Style="{StaticResource CardBorderStyle}" Margin="0,0,0,18">
-                        <StackPanel>
-                            <TextBlock Style="{StaticResource SectionCaptionStyle}" Text="ПРОЦЕСС И PYTHON" />
-                            <TextBlock Margin="0,10,0,0" FontSize="20" FontWeight="SemiBold" Text="{Binding BotStatus}" Foreground="{Binding StatusBrush}" />
-                            <TextBlock Margin="0,12,0,0" Style="{StaticResource InputLabelStyle}" Text="Используемый интерпретатор" />
-                            <TextBlock TextWrapping="Wrap" Text="{Binding BotExecutable}" />
-                            <TextBlock Margin="0,16,0,0" Style="{StaticResource InputLabelStyle}" Text="Отслеживаемые стримеры" />
-                            <TextBlock TextWrapping="Wrap" Text="{Binding StreamersSummary}" />
                         </StackPanel>
-                    </Border>
+                    </ScrollViewer>
 
-                    <Border Grid.Row="2" Style="{StaticResource SoftCardBorderStyle}" Margin="0,0,0,18">
-                        <StackPanel>
-                            <TextBlock Style="{StaticResource SectionCaptionStyle}" Text="МИНИ-ЧЕКЛИСТ" />
-                            <TextBlock Style="{StaticResource SectionTitleStyle}" Margin="0,8,0,0" Text="Чтобы всё работало с первого раза" />
+                    <Grid Grid.Column="1">
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto" />
+                            <RowDefinition Height="Auto" />
+                            <RowDefinition Height="Auto" />
+                        </Grid.RowDefinitions>
 
-                            <StackPanel Margin="0,16,0,0">
-                                <TextBlock Margin="0,0,0,8" Text="1. Укажи правильную папку проекта и проверь .env." />
-                                <TextBlock Margin="0,0,0,8" Text="2. Сохрани настройки перед запуском или перезапуском." />
-                                <TextBlock Text="3. Следи за правой панелью лога: там сразу видно ошибки Twitch и Telegram API." />
-                            </StackPanel>
-                        </StackPanel>
-                    </Border>
-
-                    <Border Grid.Row="3" Style="{StaticResource CardBorderStyle}">
-                        <Grid>
-                            <Grid.RowDefinitions>
-                                <RowDefinition Height="Auto" />
-                                <RowDefinition Height="*" />
-                                <RowDefinition Height="Auto" />
-                            </Grid.RowDefinitions>
-
+                        <Border Grid.Row="0" Style="{StaticResource CardBorderStyle}" Margin="0,0,0,18">
                             <Grid>
                                 <Grid.ColumnDefinitions>
                                     <ColumnDefinition Width="*" />
-                                    <ColumnDefinition Width="Auto" />
+                                    <ColumnDefinition Width="*" />
                                 </Grid.ColumnDefinitions>
 
-                                <StackPanel>
-                                    <TextBlock Style="{StaticResource SectionCaptionStyle}" Text="ЖИВОЙ ЛОГ" />
-                                    <WrapPanel Margin="0,10,0,0">
-                                        <Border Style="{StaticResource BadgeBorderStyle}" Margin="0,0,10,0">
-                                            <StackPanel Orientation="Horizontal">
-                                                <Ellipse Width="10"
-                                                         Height="10"
-                                                         Fill="{DynamicResource SuccessBrush}"
-                                                         Margin="0,0,8,0"
-                                                         VerticalAlignment="Center" />
-                                                <TextBlock FontWeight="SemiBold" Text="{Binding LiveLogMode}" />
-                                            </StackPanel>
-                                        </Border>
-                                        <TextBlock VerticalAlignment="Center"
-                                                   Style="{StaticResource SectionNoteStyle}"
-                                                   Text="{Binding LiveLogStatus}" />
-                                    </WrapPanel>
+                                <StackPanel Margin="0,0,10,0">
+                                    <TextBlock Style="{StaticResource SectionCaptionStyle}" Text="КУДА УЙДЁТ УВЕДОМЛЕНИЕ" />
+                                    <TextBlock Margin="0,10,0,0" FontSize="20" FontWeight="SemiBold" Text="{Binding DestinationSummary}" TextWrapping="Wrap" />
+                                    <TextBlock Margin="0,8,0,0" Style="{StaticResource SectionNoteStyle}" Text="Telegram-канал, который сейчас прописан в конфиге." />
                                 </StackPanel>
 
-                                <Button Grid.Column="1"
-                                        Style="{StaticResource GhostButtonStyle}"
-                                        Margin="10,0,0,0"
-                                        Padding="12,8"
-                                        Content="Открыть папку логов"
-                                        Command="{Binding OpenLogsFolderCommand}" />
+                                <StackPanel Grid.Column="1" Margin="10,0,0,0">
+                                    <TextBlock Style="{StaticResource SectionCaptionStyle}" Text="ТЕМА" />
+                                    <TextBlock Margin="0,10,0,0" FontSize="20" FontWeight="SemiBold" Text="{Binding ThemeSummary}" />
+                                    <TextBlock Margin="0,8,0,0" Style="{StaticResource SectionNoteStyle}" Text="{Binding ThemeDescription}" />
+                                </StackPanel>
                             </Grid>
+                        </Border>
+
+                        <Border Grid.Row="1" Style="{StaticResource CardBorderStyle}" Margin="0,0,0,18">
+                            <StackPanel>
+                                <TextBlock Style="{StaticResource SectionCaptionStyle}" Text="ПРОЦЕСС И PYTHON" />
+                                <TextBlock Margin="0,10,0,0" FontSize="20" FontWeight="SemiBold" Text="{Binding BotStatus}" Foreground="{Binding StatusBrush}" />
+                                <TextBlock Margin="0,12,0,0" Style="{StaticResource InputLabelStyle}" Text="Используемый интерпретатор" />
+                                <TextBlock TextWrapping="Wrap" Text="{Binding BotExecutable}" />
+                                <TextBlock Margin="0,16,0,0" Style="{StaticResource InputLabelStyle}" Text="Отслеживаемые стримеры" />
+                                <TextBlock TextWrapping="Wrap" Text="{Binding StreamersSummary}" />
+                            </StackPanel>
+                        </Border>
+
+                        <Border Grid.Row="2" Style="{StaticResource SoftCardBorderStyle}">
+                            <StackPanel>
+                                <TextBlock Style="{StaticResource SectionCaptionStyle}" Text="МИНИ-ЧЕКЛИСТ" />
+                                <TextBlock Style="{StaticResource SectionTitleStyle}" Margin="0,8,0,0" Text="Чтобы всё работало с первого раза" />
+
+                                <StackPanel Margin="0,16,0,0">
+                                    <TextBlock Margin="0,0,0,8" Text="1. Укажи правильную папку проекта и проверь .env." />
+                                    <TextBlock Margin="0,0,0,8" Text="2. Сохрани настройки перед запуском или перезапуском." />
+                                    <TextBlock Text="3. Смотри большой логовый блок ниже: там сразу видны ошибки Twitch и Telegram API." />
+                                </StackPanel>
+                            </StackPanel>
+                        </Border>
+                    </Grid>
+                </Grid>
+
+                <Border Grid.Row="2" Style="{StaticResource CardBorderStyle}" MinHeight="330">
+                    <Grid>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto" />
+                            <RowDefinition Height="*" />
+                            <RowDefinition Height="Auto" />
+                        </Grid.RowDefinitions>
+
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*" />
+                                <ColumnDefinition Width="Auto" />
+                            </Grid.ColumnDefinitions>
+
+                            <StackPanel>
+                                <TextBlock Style="{StaticResource SectionCaptionStyle}" Text="ЖИВОЙ ЛОГ" />
+                                <TextBlock Style="{StaticResource SectionTitleStyle}" Margin="0,8,0,0" Text="Лог в реальном времени" />
+                                <WrapPanel Margin="0,12,0,0">
+                                    <Border Style="{StaticResource BadgeBorderStyle}" Margin="0,0,10,10">
+                                        <StackPanel Orientation="Horizontal">
+                                            <Ellipse Width="10"
+                                                     Height="10"
+                                                     Fill="{DynamicResource SuccessBrush}"
+                                                     Margin="0,0,8,0"
+                                                     VerticalAlignment="Center" />
+                                            <TextBlock FontWeight="SemiBold" Text="{Binding LiveLogMode}" />
+                                        </StackPanel>
+                                    </Border>
+                                    <TextBlock VerticalAlignment="Center"
+                                               Style="{StaticResource SectionNoteStyle}"
+                                               Text="{Binding LiveLogStatus}" />
+                                </WrapPanel>
+                            </StackPanel>
+
+                            <Button Grid.Column="1"
+                                    Style="{StaticResource GhostButtonStyle}"
+                                    Margin="12,0,0,0"
+                                    Padding="12,8"
+                                    Content="В конец"
+                                    Click="OnScrollLogToEndClick" />
+                        </Grid>
+
+                        <Grid Grid.Row="1" Margin="0,18,0,0" MinHeight="250">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*" />
+                                <ColumnDefinition Width="22" />
+                            </Grid.ColumnDefinitions>
 
                             <TextBox x:Name="LogTextBox"
-                                     Grid.Row="1"
-                                     Margin="0,16,0,0"
+                                     Grid.Column="0"
+                                     Style="{x:Null}"
                                      FontFamily="Cascadia Mono, Consolas"
                                      FontSize="13"
+                                     Padding="12,10"
+                                     Background="{DynamicResource LogBackgroundBrush}"
+                                     Foreground="{DynamicResource TextBrush}"
+                                     BorderBrush="{DynamicResource BorderBrush}"
+                                     BorderThickness="1"
                                      AcceptsReturn="True"
-                                     TextWrapping="Wrap"
-                                     VerticalScrollBarVisibility="Auto"
+                                     TextWrapping="NoWrap"
+                                     VerticalScrollBarVisibility="Visible"
                                      HorizontalScrollBarVisibility="Auto"
-                                     IsReadOnly="True"
-                                     Text="{Binding LogContent, Mode=OneWay}" />
+                                     IsReadOnly="True" />
 
-                            <StackPanel Grid.Row="2" Margin="0,12,0,0">
-                                <TextBlock Style="{StaticResource SectionNoteStyle}" Text="{Binding LastRefreshText}" />
-                                <TextBlock Margin="0,4,0,0" Style="{StaticResource SectionNoteStyle}" Text="{Binding LogSourceSummary}" />
-                            </StackPanel>
+                            <ScrollBar x:Name="LogScrollBar"
+                                       Grid.Column="1"
+                                       Margin="8,0,0,0"
+                                       Width="14"
+                                       Minimum="0"
+                                       SmallChange="1"
+                                       LargeChange="20"
+                                       Orientation="Vertical"
+                                       ValueChanged="OnLogScrollBarValueChanged"
+                                       ToolTip="Ползунок прокрутки живого лога" />
                         </Grid>
-                    </Border>
-                </Grid>
+
+                        <StackPanel Grid.Row="2" Margin="0,12,0,0">
+                            <TextBlock Style="{StaticResource SectionNoteStyle}" Text="{Binding LastRefreshText}" />
+                            <TextBlock Margin="0,4,0,0" Style="{StaticResource SectionNoteStyle}" Text="{Binding LogSourceSummary}" />
+                            <Button Margin="0,10,0,0"
+                                    Width="176"
+                                    Style="{StaticResource GhostButtonStyle}"
+                                    Content="Открыть папку логов"
+                                    Command="{Binding OpenLogsFolderCommand}" />
+                        </StackPanel>
+                    </Grid>
+                </Border>
             </Grid>
         </Grid>
     </Grid>

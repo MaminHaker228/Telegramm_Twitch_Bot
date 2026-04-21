@@ -297,6 +297,7 @@ public sealed class MainViewModel : ObservableObject, IAsyncDisposable
             EnsureBotRootExists();
             await _envFileService.SaveAsync(Config);
             await SaveDesktopSettingsAsync();
+            RestartLogMonitoring();
             UpdateSummaries();
             SetInfo($"Настройки сохранены в {_envFileService.GetEnvFilePath(Config.BotRootPath)}.");
         }
@@ -312,6 +313,7 @@ public sealed class MainViewModel : ObservableObject, IAsyncDisposable
         {
             await _envFileService.SaveAsync(Config);
             await SaveDesktopSettingsAsync();
+            RestartLogMonitoring();
             var status = await _botProcessService.StartAsync(Config.BotRootPath);
             ApplyProcessStatus(status);
             await RefreshAsync(silent: true);
@@ -346,6 +348,7 @@ public sealed class MainViewModel : ObservableObject, IAsyncDisposable
             EnsureBotRootExists();
             await _envFileService.SaveAsync(Config);
             await SaveDesktopSettingsAsync();
+            RestartLogMonitoring();
             await _botProcessService.StopAsync(Config.BotRootPath);
             var status = await _botProcessService.StartAsync(Config.BotRootPath);
             ApplyProcessStatus(status);
@@ -381,7 +384,7 @@ public sealed class MainViewModel : ObservableObject, IAsyncDisposable
         {
             var status = _botProcessService.GetStatus(Config.BotRootPath);
             ApplyProcessStatus(status);
-            LogContent = await _logTailService.ReadTailAsync(Config.BotRootPath);
+            LogContent = await _logTailService.ReadTailAsync(Config.BotRootPath, Config.LogFile);
             LogSourceSummary = _logTailService.WatchedFilesSummary;
             LastRefreshText = $"Обновлено: {DateTime.Now:dd.MM.yyyy HH:mm:ss}";
 
@@ -471,7 +474,7 @@ public sealed class MainViewModel : ObservableObject, IAsyncDisposable
     private void HandleConfigPropertyChanged(object? sender, PropertyChangedEventArgs e)
     {
         UpdateSummaries();
-        if (e.PropertyName is nameof(BotEnvironmentConfig.BotRootPath))
+        if (e.PropertyName is nameof(BotEnvironmentConfig.BotRootPath) or nameof(BotEnvironmentConfig.LogFile))
         {
             RestartLogMonitoring();
             RaiseCommandStates();
@@ -482,9 +485,9 @@ public sealed class MainViewModel : ObservableObject, IAsyncDisposable
     {
         if (Directory.Exists(Config.BotRootPath))
         {
-            _logTailService.StartWatching(Config.BotRootPath);
+            _logTailService.StartWatching(Config.BotRootPath, Config.LogFile);
             LiveLogMode = "LIVE";
-            LiveLogStatus = "Лог обновляется автоматически при изменении bot.log / stderr.log / stdout.log.";
+            LiveLogStatus = "Лог обновляется автоматически при изменении основного log file, stderr.log и stdout.log.";
             LogSourceSummary = _logTailService.WatchedFilesSummary;
             return;
         }
